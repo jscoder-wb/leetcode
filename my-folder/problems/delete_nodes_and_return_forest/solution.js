@@ -4,6 +4,7 @@ var delNodes = function (root, to_delete) {
     if (!root) return null;
     let shouldDelete = to_delete.includes(root.val);
     if (isRoot && !shouldDelete) roots.push(root);
+    // left and right will be ROOTS if current root was deleted
     root.left = helper(root.left, shouldDelete);
     root.right = helper(root.right, shouldDelete);
     return shouldDelete ? null : root;
