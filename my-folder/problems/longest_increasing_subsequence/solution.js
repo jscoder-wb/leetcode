@@ -1,13 +1,34 @@
-var lengthOfLIS = function(nums) {
-  const dp = (new Array(nums.length)).fill(1);
-  for (let i = 1; i < nums.length; i++) {
-    for (let j = 0; j < i; j++) {
-      if (nums[j] < nums[i]) {
-        dp[i] = Math.max(dp[j] + 1, dp[i]);
+// dp + binary search (watch babbar for understanding)
+var lengthOfLIS = function (nums) {
+  function optimalBinarySearch(nums) {
+    if (nums.length === 0)
+      return 0;
+    let ans = [];
+    ans.push(nums[0]);
+
+    for (let i = 1; i < nums.length; i++) {
+      if (nums[i] > ans[ans.length - 1]) {
+        ans.push(nums[i]);
+      } else {
+        let index = lowerBound(ans, nums[i]);
+        ans[index] = nums[i];
       }
     }
+    return ans.length;
   }
-  return Math.max(...dp);
-};
 
-// dp element indicates uss position tak 0 index se length of longest I S 
+  function lowerBound(arr, target) {
+    let left = 0
+      , right = arr.length;
+    while (left < right) {
+      let mid = Math.floor((left + right) / 2);
+      if (arr[mid] < target) {
+        left = mid + 1;
+      } else {
+        right = mid;
+      }
+    }
+    return left;
+  }
+  return optimalBinarySearch(nums);
+}; 
