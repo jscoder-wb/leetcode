@@ -18,3 +18,4 @@ const merge = (left, right) => {
     }
     return [...result, ...left, ...right]
 }
+// for daily challenge
