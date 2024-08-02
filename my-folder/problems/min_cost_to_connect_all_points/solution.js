@@ -1,90 +1,44 @@
-// prims algo solution (from neetcode)
-var minCostConnectPoints = function(points) {
-  let minCost = 0;
-  const minHeap = new MinBinaryHeap()
-  const visited = new Set();
-  visited.add(JSON.stringify(points[0]))
+// prims algo (from codeStory)
+function primsMinMST(adj, V) {
+  const Q = new MinPriorityQueue({ priority: e => e[0] });
+  Q.enqueue([0, 0])
 
-  for (let i = 1; i < points.length; i++) {
-    minHeap.insert([getDistance(points[0], points[i]), points[0], points[i]])
-  } // [dist, a, b] dist = shortest dist from point a to b
+  const inMST = new Array(V).fill(false); // visited array
+  let sum = 0;
 
-  while (visited.size < points.length) {
-    const [cost, _, point] = minHeap.extractMin()
-    if (!visited.has(JSON.stringify(point))) {
-      visited.add(JSON.stringify(point));
-      minCost += cost;
+  while (Q.size()) {
+    const [wt, node] = Q.dequeue().element;
+    if (inMST[node]) continue;
+    inMST[node] = true;
+    sum += wt;
 
-      for (let i = 0; i < points.length; i++) {
-        const distance = getDistance(point, points[i]);
-        if (!visited.has(JSON.stringify(points[i]))) {
-          minHeap.insert([distance, point, points[i]])
-        }
+    for (const [neighbor, neighbor_wt] of adj[node]) {
+      if (!inMST[neighbor]) {
+        Q.enqueue([neighbor_wt, neighbor]);
       }
-    }
+    } 
   }
-  return minCost;
-};
-function getDistance(p1, p2) {
-  return Math.abs(p1[0] - p2[0]) + Math.abs(p1[1] - p2[1]);
+  return sum;
 }
-class MinBinaryHeap {
-  constructor() {
-    this.values = [];
-  }
-  insert(element) {
-    this.values.push(element);
-    this.bubbleUp();
-  }
-  bubbleUp() {
-    let idx = this.values.length - 1;
-    const element = this.values[idx];
-    while (idx > 0) {
-      let parentIdx = Math.floor((idx - 1) / 2);
-      let parent = this.values[parentIdx];
-      if (element[0] >= parent[0])
-        break;
-      this.values[parentIdx] = element;
-      this.values[idx] = parent;
-      idx = parentIdx;
+function minCostConnectPoints(points) {
+  // making adj list
+  const V = points.length;
+  const adj = Array.from({
+    length: V
+  }, () => []);
+
+  for (let i = 0; i < V; i++) {
+    for (let j = i + 1; j < V; j++) {
+      const x1 = points[i][0];
+      const y1 = points[i][1];
+      const x2 = points[j][0];
+      const y2 = points[j][1];
+
+      const d = Math.abs(x1 - x2) + Math.abs(y1 - y2);
+
+      adj[i].push([j, d]);
+      adj[j].push([i, d]);
     }
   }
-  extractMin() {
-    const max = this.values[0];
-    const end = this.values.pop();
-    if (this.values.length > 0) {
-      this.values[0] = end;
-      this.sinkDown();
-    }
-    return max;
-  }
-  sinkDown() {
-    let idx = 0;
-    const length = this.values.length;
-    const element = this.values[0];
-    while (true) {
-      let leftChildIdx = 2 * idx + 1;
-      let rightChildIdx = 2 * idx + 2;
-      let leftChild, rightChild;
-      let swap = null;
-      if (leftChildIdx < length) {
-        leftChild = this.values[leftChildIdx];
-        if (leftChild[0] < element[0]) {
-          swap = leftChildIdx;
-        }
-      }
-      if (rightChildIdx < length) {
-        rightChild = this.values[rightChildIdx];
-        if ((swap === null && rightChild[0] < element[0]) || (swap !== null && rightChild[0] < leftChild[0])) {
-          swap = rightChildIdx;
-        }
-      }
-      if (swap === null)
-        break;
-      this.values[idx] = this.values[swap];
-      this.values[swap] = element;
-      idx = swap;
-    }
-  }
+  return primsMinMST(adj, V);
 }
-// slight modification for readability
