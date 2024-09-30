@@ -1,6 +1,7 @@
-var longestPalindrome = function(s) {
+// approach - expand from center
+var longestPalindrome = function (s) {
   let longest = ""
-  const helper = function(i, j) {
+  const helper = function (i, j) {
     while (i >= 0 && j < s.length && s[i] === s[j]) {
       i--; j++
     }
@@ -11,6 +12,6 @@ var longestPalindrome = function(s) {
     let even = helper(i, i + 1)
     let longerPalindrome = odd.length > even.length ? odd : even
     if (longerPalindrome.length > longest.length) longest = longerPalindrome
-  }  
+  }
   return longest
 };
