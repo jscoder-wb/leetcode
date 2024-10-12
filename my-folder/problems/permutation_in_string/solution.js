@@ -1,32 +1,21 @@
-// sliding window approach from neetcode video
-var checkInclusion = function(s1, s2) {
-  if (s1.length > s2.length) return false;
-  let s1Count = new Array(26).fill(0), s2Count = new Array(26).fill(0);
-  
-  for (let i = 0; i < s1.length; i++) {
-    s1Count[s1[i].charCodeAt(0) - "a".charCodeAt(0)] += 1;
-    s2Count[s2[i].charCodeAt(0) - "a".charCodeAt(0)] += 1;
-  }
-  let matches = 0;
-  for (let i = 0; i < 26; i++) {
-    if (s1Count[i] === s2Count[i]) matches += 1;
-    else matches += 0;
-  }
-  let l = 0, r = s1.length - 1, charIdx
-  while(r < s2.length - 1) {
-    if (matches == 26) return true
+function checkInclusion(s1, s2) {
+  const cur = new Array(26).fill(0);
+  const goal = new Array(26).fill(0);
+  for (let c of s1) goal[c.charCodeAt(0) - 'a'.charCodeAt(0)]++;
 
-    // adding a char to window
-    charIdx = s2[++r].charCodeAt(0) - "a".charCodeAt(0)
-    s2Count[charIdx] += 1
-    if (s1Count[charIdx] == s2Count[charIdx]) matches += 1
-    else if (s1Count[charIdx] + 1 == s2Count[charIdx]) matches -= 1
-
-    // removing char from window
-    charIdx = s2[l++].charCodeAt(0) - "a".charCodeAt(0)
-    s2Count[charIdx] -= 1
-    if (s1Count[charIdx] == s2Count[charIdx]) matches += 1
-    else if (s1Count[charIdx] - 1 == s2Count[charIdx]) matches -= 1
+  for (let i = 0; i < s2.length; i++) {
+    cur[s2.charCodeAt(i) - 'a'.charCodeAt(0)]++;
+    if (i >= s1.length) {
+      cur[s2.charCodeAt(i - s1.length) - 'a'.charCodeAt(0)]--;
+    }
+    if (arraysEqual(goal, cur)) return true;
   }
-  return matches === 26;
-};
+  return false;
+}
+
+function arraysEqual(arr1, arr2) {
+  for (let i = 0; i < arr1.length; i++) {
+    if (arr1[i] !== arr2[i]) return false;
+  }
+  return true;
+}
