@@ -1,23 +1,20 @@
 class Solution {
 public:
     bool checkInclusion(string s1, string s2) {
-        if (s2.size() < s1.size()) return false;
-        vector<int> freqS1(26, 0);
-        vector<int> freqS2(26, 0);
-        for (char c : s1) freqS1[c - 'a']++;
-        int i = 0, j = 0;
+        vector<int> cur(26, 0);
+        vector<int> goal(26, 0);
 
-        while (j < s2.size()) {
-            freqS2[s2[j] - 'a']++;
-            if (j - i + 1 == s1.size()) {
-                if (freqS1 == freqS2) return true;
+        for (char c : s1) {
+            goal[c - 'a']++;
+        }
+
+        for (int i = 0; i < s2.length(); i++) {
+            cur[s2[i] - 'a']++;
+            if (i >= s1.length()) {
+                cur[s2[i - s1.length()] - 'a']--;
             }
-            if (j - i + 1 < s1.size()) j++;
-            else {
-                freqS2[s2[i] - 'a']--;
-                i++;
-                j++;
-            }
+            if (goal == cur)
+                return true;
         }
         return false;
     }
