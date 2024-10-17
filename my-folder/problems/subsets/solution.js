@@ -1,12 +1,18 @@
 // backtracking solution
-var subsets = function(nums, index = 0, subset = [], results = []) {
-    if (index === nums.length) results.push(subset);
-    else {
-        //include part
-        subsets(nums, index + 1, [...subset, nums[index]], results);
-
-        //exclude part
-        subsets(nums, index + 1, subset, results);
+function subsets(nums) {
+  function solve(index, subset) {
+    if (index >= nums.length) {
+      ans.push([...subset]);
+      return;
     }
-    return results;
-};
+    solve(index + 1, subset);
+
+    const element = nums[index];
+    subset.push(element);
+    solve(index + 1, subset);
+    subset.pop();
+  }
+  const ans = [];
+  solve(0, []);
+  return ans;
+}
